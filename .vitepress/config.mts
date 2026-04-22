@@ -59,6 +59,7 @@ export default defineConfig({
   
   markdown: {
     math: true, // 原生支持数学公式 (使用 MathJax 3)
-    lineNumbers: true
+    lineNumbers: true,
+    languages: ['asm']
   }
 })
