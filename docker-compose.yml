@@ -8,7 +8,7 @@ services:
     container_name: zx_11408_docs
     restart: always
     ports:
-      - "8080:80"  # 您可以通过 服务器IP:8080 访问
+      - "985:80"  # 您可以通过 服务器IP:985 访问
     networks:
       - 1panel-network
 
