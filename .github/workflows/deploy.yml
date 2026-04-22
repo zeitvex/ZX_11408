@@ -1,0 +1,58 @@
+name: 1Panel 静态同步部署 (LiuShen 风格)
+
+on:
+  push:
+    branches:
+      - main  # 源码推送触发
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出源码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: 安装依赖并构建
+        run: |
+          npm install
+          npm run build
+
+      - name: 部署到静态分支 (gh-pages)
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .vitepress/dist
+          publish_branch: gh-pages  # 编译后的网页存放在这个分支
+
+      - name: SSH 远程同步到 1Panel
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            # 1. 进入 1Panel 静态网站目录 (例如 /opt/1panel/apps/openresty/openresty/www/sites/zx11408.com/index)
+            # 请根据您的 1Panel 实际创建的网站路径修改下方 cd 命令
+            cd /opt/1panel/apps/openresty/openresty/www/sites/know.zeitvex.com/index
+            
+            # 2. 权限安全设置
+            git config --global --add safe.directory $(pwd)
+            
+            # 3. 首次部署如果没有 git 需要初始化 (只需执行一次)
+            if [ ! -d ".git" ]; then
+              git init
+              git remote add origin https://github.com/${{ github.repository }}.git
+            fi
+            
+            # 4. 强制拉取 gh-pages 静态分支的内容
+            git fetch --all
+            git reset --hard origin/gh-pages
+            
+            echo "✅ 网页内容已于 $(date) 成功同步到 1Panel 静态目录！"
