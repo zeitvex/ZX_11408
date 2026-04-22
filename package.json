@@ -1,0 +1,15 @@
+{
+  "name": "zx-11408-docs",
+  "version": "1.0.0",
+  "description": "11408 Graduate Entrance Exam Knowledge Base",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "vitepress": "^1.0.0",
+    "markdown-it-mathjax3": "^4.3.2",
+    "vue": "^3.3.4"
+  }
+}
