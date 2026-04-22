@@ -1,0 +1,1 @@
+import{_ as e,o as t,c as _}from"./chunks/framework.Cueh3jLq.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"高数/01_预备知识与基础公式.md","filePath":"高数/01_预备知识与基础公式.md","lastUpdated":1776859005000}'),a={name:"高数/01_预备知识与基础公式.md"};function r(o,s,c,n,d,p){return t(),_("div")}const f=e(a,[["render",r]]);export{m as __pageData,f as default};
