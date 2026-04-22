@@ -1,1 +1,0 @@
-import{_ as e,o as t,c as a}from"./chunks/framework.Cueh3jLq.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"高数/README.md","filePath":"高数/README.md","lastUpdated":1776859005000}'),r={name:"高数/README.md"};function o(s,c,n,d,p,_){return t(),a("div")}const E=e(r,[["render",o]]);export{m as __pageData,E as default};
