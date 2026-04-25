@@ -1,0 +1,1 @@
+import{_ as e,o as t,c as a}from"./chunks/framework.DH-ORP1j.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"计算机网络/04_网络层.md","filePath":"计算机网络/04_网络层.md","lastUpdated":1777121392000}'),_={name:"计算机网络/04_网络层.md"};function r(o,s,c,n,d,p){return t(),a("div")}const f=e(_,[["render",r]]);export{m as __pageData,f as default};
