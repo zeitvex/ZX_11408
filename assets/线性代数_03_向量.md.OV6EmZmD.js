@@ -1,1 +1,0 @@
-import{_ as e,o as t,c as a}from"./chunks/framework.DH-ORP1j.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"线性代数/03_向量.md","filePath":"线性代数/03_向量.md","lastUpdated":1777121392000}'),r={name:"线性代数/03_向量.md"};function _(o,s,c,n,d,p){return t(),a("div")}const f=e(r,[["render",_]]);export{m as __pageData,f as default};

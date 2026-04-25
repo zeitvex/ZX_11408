@@ -1,1 +1,0 @@
-import{_ as e,o as t,c as _}from"./chunks/framework.DH-ORP1j.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"概率论/06_数理统计基本概念.md","filePath":"概率论/06_数理统计基本概念.md","lastUpdated":1777121392000}'),a={name:"概率论/06_数理统计基本概念.md"};function r(o,s,c,n,d,p){return t(),_("div")}const f=e(a,[["render",r]]);export{m as __pageData,f as default};

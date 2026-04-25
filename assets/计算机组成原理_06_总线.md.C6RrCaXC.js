@@ -1,1 +1,0 @@
-import{_ as e,o as t,c as a}from"./chunks/framework.DH-ORP1j.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"计算机组成原理/06_总线.md","filePath":"计算机组成原理/06_总线.md","lastUpdated":1777121392000}'),r={name:"计算机组成原理/06_总线.md"};function _(o,s,c,n,d,p){return t(),a("div")}const f=e(r,[["render",_]]);export{m as __pageData,f as default};
