@@ -29,7 +29,7 @@ ZX_11408/
 | 命令 | 用途 | 备注 |
 | :--- | :--- | :--- |
 | `npm install` | **初始化环境** | 首次克隆项目或 package.json 更新后运行 |
-| `npm run dev` | **本地实时预览** | 启动开发服务器，支持热更新 (http://localhost:5173) |
+| `npm run dev` | **本地实时预览** | 启动开发服务器，支持热更新 (`http://localhost:5173`) |
 | `npm run build` | **静态构建** | 生成部署用的 HTML 文件 (存放在 `.vitepress/dist`) |
 | `npm run preview` | **预览构建结果** | 在本地模拟生产环境运行构建后的站点 |
 
