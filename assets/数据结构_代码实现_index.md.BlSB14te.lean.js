@@ -1,1 +1,0 @@
-import{_ as e,o as t,c as a}from"./chunks/framework.CAXxHpAX.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"数据结构/代码实现/index.md","filePath":"数据结构/代码实现/index.md","lastUpdated":1778639448000}'),n={name:"数据结构/代码实现/index.md"};function r(o,s,d,c,i,p){return t(),a("div")}const f=e(n,[["render",r]]);export{m as __pageData,f as default};

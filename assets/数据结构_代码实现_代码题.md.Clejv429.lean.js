@@ -1,1 +1,0 @@
-import{_ as e,o as t,c as a}from"./chunks/framework.CAXxHpAX.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"数据结构/代码实现/代码题.md","filePath":"数据结构/代码实现/代码题.md","lastUpdated":1778639448000}'),r={name:"数据结构/代码实现/代码题.md"};function o(s,c,n,_,d,p){return t(),a("div")}const f=e(r,[["render",o]]);export{m as __pageData,f as default};
