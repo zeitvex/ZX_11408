@@ -1,11 +1,11 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  title: "ZX_11408 知识库",
-  description: "2027 计算机考研 11408 全科复习笔记",
+  title: 'ZX_11408 知识库',
+  description: '2027 计算机考研 11408 全科复习笔记',
   lang: 'zh-CN',
   lastUpdated: true,
-  
+
   themeConfig: {
     logo: '/logo.png',
     nav: [
@@ -147,9 +147,7 @@ export default defineConfig({
         }
       }
     },
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/zeitvex/ZX_11408' }
-    ],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/zeitvex/ZX_11408' }],
     footer: {
       message: 'Released under the MIT License.',
       copyright: 'Copyright © 2026-present zeitvex'
@@ -163,7 +161,7 @@ export default defineConfig({
       next: '下一页'
     }
   },
-  
+
   markdown: {
     math: true, // 原生支持数学公式 (使用 MathJax 3)
     lineNumbers: true,

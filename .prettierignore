@@ -1,0 +1,5 @@
+node_modules
+.vitepress/dist
+.vitepress/cache
+last_build.log
+files.txt
