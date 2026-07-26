@@ -87,9 +87,18 @@ const CHECKS = [
   '\\limits 用法错误',
   '对齐符 & 在环境外',
   '裸尖括号(Vue 会当组件)',
+  '同级标题编号不一致',
   '代码块缺语言标注',
   '图片链接失效'
 ]
+
+// 附录性小节：按约定不编号，且置于文末
+const APPENDIX_HEADING =
+  /^(考纲内容|考纲摘要|本章脉络|本章小结|小结|.*速查表?|.*公式速查|易错辨析|易错.*|重难点提示|.*解题套路|.*常用方法|题目整理|经典错题|考点汇总.*|公式汇总|本章公式汇总|番外.*|附.*|参考.*|快速导航|目录|文件一览|专项)$/
+
+// 标题编号：`1. ` / `（1）` / `一、`。点后必须跟空格且序号不超过两位，
+// 否则 "802.11 的 MAC 帧头格式" 这类技术名词会被误判成编号。
+const HEADING_NUMBER = /^(?:\d{1,2}[.、]\s|[（(]\d{1,2}[）)]\s*|[一二三四五六七八九十]{1,3}[、.]\s*)/
 
 // MathJax 默认不认识、会导致公式渲染失败的自造命令
 const NONSTANDARD_MACROS = ['part', 'R', 'N', 'C', 'empty', 'and', 'or', 'exist']
@@ -293,6 +302,48 @@ async function audit() {
       if (SAFE_HTML_TAGS.has(m[2].toLowerCase())) continue
       const ln = proseOnly.slice(0, m.index).split('\n').length
       record('裸尖括号(Vue 会当组件)', rel, `L${ln} <${m[2]}`)
+    }
+
+    // 同一父节下的同级标题，必须要么都编号、要么都不编号（附录性小节除外）
+    const allHeads = []
+    inFence = false
+    lines.forEach((line, idx) => {
+      if (line.trim().startsWith('```')) {
+        inFence = !inFence
+        return
+      }
+      if (inFence) return
+      const hm = line.match(/^(#{2,6})\s+(.*?)\s*$/)
+      if (hm) allHeads.push({ idx, lv: hm[1].length, title: hm[2] })
+    })
+
+    for (let lv = 2; lv <= 6; lv += 1) {
+      const groups = []
+      let cur = []
+      for (const h of allHeads) {
+        if (h.lv < lv) {
+          if (cur.length) groups.push(cur)
+          cur = []
+        } else if (h.lv === lv) {
+          cur.push(h)
+        }
+      }
+      if (cur.length) groups.push(cur)
+
+      for (const g of groups) {
+        const body = g.filter(
+          (h) => !APPENDIX_HEADING.test(h.title.replace(HEADING_NUMBER, '').trim())
+        )
+        if (body.length < 2) continue
+        const numbered = body.filter((h) => HEADING_NUMBER.test(h.title))
+        if (numbered.length && numbered.length !== body.length) {
+          record(
+            '同级标题编号不一致',
+            rel,
+            `H${lv} L${body[0].idx + 1} 起：${numbered.length}/${body.length} 带编号`
+          )
+        }
+      }
     }
 
     // 本地图片是否存在
