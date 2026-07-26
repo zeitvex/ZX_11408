@@ -60,6 +60,7 @@ const CHECKS = [
   '标题缺少空行',
   '块公式被包进列表',
   '非标准 LaTeX 命令',
+  '\\limits 用法错误',
   '代码块缺语言标注',
   '图片链接失效'
 ]
@@ -192,7 +193,7 @@ async function audit() {
         }
       }
 
-      if (/^\s*[-*+]\s+\$\$\s*$/.test(line)) {
+      if (/^\s*(?:[-*+]|\d+[.)])\s+\$\$\s*$/.test(line)) {
         record('块公式被包进列表', rel, `L${idx + 1}`)
       }
     })
@@ -207,6 +208,14 @@ async function audit() {
         counts['非标准 LaTeX 命令'] += found.length
         hits['非标准 LaTeX 命令'].push(`${rel}  \\${name} × ${found.length}`)
       }
+    }
+
+    // \limits 必须紧跟算符：正确写法是 \iint\limits_{D}，
+    // 写成 \iint_\limits{D} 会让 MathJax 报 "Misplaced \limits"。
+    const badLimits = mathText.match(/[_^]\\limits/g)
+    if (badLimits) {
+      counts['\\limits 用法错误'] += badLimits.length
+      hits['\\limits 用法错误'].push(`${rel} × ${badLimits.length}`)
     }
 
     // 本地图片是否存在

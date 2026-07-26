@@ -38,13 +38,15 @@ test('块级公式保持独立成行', () => {
 })
 
 test('被列表项包住的块公式不会让状态错位', () => {
-  // 历史 bug：`- $$` 不等于 `$$`，inMath 未开启却被闭合行开启，
-  // 导致其后整个文件被当成公式内容，静默跳过规范化。
-  const source = ['- 前一项', '', '- $$', 'x=1', '$$', '', '## 后面的标题', '正文'].join('\n')
-  const result = run(source)
-  assert.ok(result.includes('## 后面的标题'), '标题应当仍被正常处理')
-  assert.ok(!/^- \$\$/m.test(result), '列表项包裹的 $$ 应被还原为独立块')
-  assert.equal(normalizeMarkdown(result), normalizeMarkdown(normalizeMarkdown(result)))
+  // 历史 bug：`- $$` / `5. $$` 不等于 `$$`，inMath 未开启却被闭合行开启，
+  // 导致其后整个文件被当成公式内容——正文被吞进公式块，规范化也静默失效。
+  for (const marker of ['-', '5.', '1)']) {
+    const source = ['前一项', '', `${marker} $$`, 'x=1', '$$', '', '## 后面的标题', '正文'].join('\n')
+    const result = run(source)
+    assert.ok(result.includes('## 后面的标题'), `${marker}: 标题应当仍被正常处理`)
+    assert.ok(!new RegExp(`^\\s*\\${marker[0]}.*\\$\\$`, 'm').test(result), `${marker}: $$ 应被还原为独立块`)
+    assert.equal(normalizeMarkdown(result), normalizeMarkdown(normalizeMarkdown(result)))
+  }
 })
 
 test('标题上下自动补空行', () => {

@@ -1,0 +1,38 @@
+/* 知识库自定义样式：主要解决长公式与宽表格在窄屏下撑破布局的问题 */
+
+/* 块级公式：超出宽度时让公式自身横向滚动，而不是把整个页面撑宽。
+   MathJax 的 display 公式默认不折行，重积分、链式法则等长公式必然溢出。 */
+mjx-container[display='true'] {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  padding: 0.25rem 0;
+}
+
+/* 滚动条做得细一些，避免打断阅读 */
+mjx-container[display='true']::-webkit-scrollbar {
+  height: 6px;
+}
+
+mjx-container[display='true']::-webkit-scrollbar-thumb {
+  background: var(--vp-c-divider);
+  border-radius: 3px;
+}
+
+/* 行内公式不允许被拆到两行，否则符号会断开 */
+mjx-container:not([display='true']) {
+  white-space: nowrap;
+}
+
+/* 宽表格同样限制在内容区内滚动 */
+.vp-doc table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* 正文中的 <u> 用作「需要记住的论断」，与 **加粗**（术语）区分开 */
+.vp-doc u {
+  text-decoration-color: var(--vp-c-brand-1);
+  text-underline-offset: 3px;
+}
