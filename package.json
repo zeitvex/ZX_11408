@@ -6,6 +6,8 @@
     "dev": "vitepress dev",
     "build": "vitepress build",
     "preview": "vitepress preview",
+    "test": "node --test scripts/",
+    "audit": "node scripts/audit-markdown.mjs",
     "format": "node scripts/normalize-markdown.mjs && prettier --write .",
     "format:check": "node scripts/normalize-markdown.mjs --check && prettier --check ."
   },
