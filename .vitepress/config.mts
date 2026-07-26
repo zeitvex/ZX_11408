@@ -176,7 +176,17 @@ export default defineConfig({
   },
 
   markdown: {
-    math: true, // 原生支持数学公式 (使用 MathJax 3)
+    // 原生数学公式支持（markdown-it-mathjax3 → MathJax 3）
+    math: {
+      tex: {
+        macros: {
+          // MathJax 默认没有闭曲面/闭曲线积分符号（属 esint 包），
+          // 不定义会渲染成红色报错，连带整条公式不显示。
+          oiint: '\\mathop{\\unicode{x222F}}',
+          oiiint: '\\mathop{\\unicode{x2230}}'
+        }
+      }
+    },
     lineNumbers: true,
     languages: ['asm']
   }

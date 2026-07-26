@@ -41,6 +41,30 @@ function maskNonProse(text) {
     .replace(/`[^`\n]*`/g, blank)
 }
 
+// 在 maskNonProse 之上再屏蔽行内公式。检查裸尖括号时必须用它，
+// 否则 `$T < C$` 这类数学比较会被误报成 HTML 标签。
+function maskProseOnly(text) {
+  const blank = (m) => ' '.repeat(m.length)
+  return maskNonProse(text).replace(/\$[^$\n]+\$/g, blank)
+}
+
+// 反复剥离最内层的数学环境，直到不再变化。
+// 必须迭代：环境可以嵌套，一次非贪婪替换只能去掉内层，会把外层的 & 留下来误报。
+function stripMathEnvs(body, envs) {
+  let prev
+  let cur = body
+  do {
+    prev = cur
+    for (const env of envs) {
+      cur = cur.replace(
+        new RegExp(`\\\\begin\\{${env}\\*?\\}((?:(?!\\\\begin\\{)[\\s\\S])*?)\\\\end\\{${env}\\*?\\}`, 'g'),
+        ' '
+      )
+    }
+  } while (cur !== prev)
+  return cur
+}
+
 function unescapedDollarPositions(text) {
   const out = []
   for (let i = 0; i < text.length; i += 1) {
@@ -61,12 +85,28 @@ const CHECKS = [
   '块公式被包进列表',
   '非标准 LaTeX 命令',
   '\\limits 用法错误',
+  '对齐符 & 在环境外',
+  '裸尖括号(Vue 会当组件)',
   '代码块缺语言标注',
   '图片链接失效'
 ]
 
 // MathJax 默认不认识、会导致公式渲染失败的自造命令
-const NONSTANDARD_MACROS = ['part', 'R', 'N', 'C', 'empty', 'and', 'or']
+const NONSTANDARD_MACROS = ['part', 'R', 'N', 'C', 'empty', 'and', 'or', 'exist']
+
+// 支持 & 对齐的数学环境
+const ALIGN_ENVS = [
+  'matrix', 'bmatrix', 'pmatrix', 'vmatrix', 'Vmatrix', 'Bmatrix', 'smallmatrix',
+  'aligned', 'align', 'alignat', 'array', 'cases', 'gathered', 'split', 'subarray'
+]
+
+// 正文中允许出现的 HTML 标签，其余会被 Vue 当成组件导致整页编译失败
+const SAFE_HTML_TAGS = new Set([
+  'u', 'b', 'i', 'em', 'strong', 'br', 'hr', 'p', 'div', 'span', 'img', 'a',
+  'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'td', 'th', 'pre', 'code',
+  'sub', 'sup', 'mark', 'del', 'ins', 'kbd', 'small', 'details', 'summary',
+  'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'font', 'center'
+])
 
 async function audit() {
   const files = (await walk(rootDir)).sort()
@@ -216,6 +256,43 @@ async function audit() {
     if (badLimits) {
       counts['\\limits 用法错误'] += badLimits.length
       hits['\\limits 用法错误'].push(`${rel} × ${badLimits.length}`)
+    }
+
+    // & 只能出现在支持对齐的环境里，否则 MathJax 报错、整条公式不显示
+    let inFenceMath = false
+    let inMathBlock = false
+    let mathStart = 0
+    let mathBuf = []
+    lines.forEach((line, idx) => {
+      const t = line.trim()
+      if (t.startsWith('```')) {
+        inFenceMath = !inFenceMath
+        return
+      }
+      if (inFenceMath) return
+      if (t === '$$') {
+        if (!inMathBlock) {
+          inMathBlock = true
+          mathStart = idx
+          mathBuf = []
+        } else {
+          const body = stripMathEnvs(mathBuf.join('\n'), ALIGN_ENVS)
+          if (body.includes('&')) {
+            record('对齐符 & 在环境外', rel, `L${mathStart + 1}-${idx + 1}`)
+          }
+          inMathBlock = false
+        }
+        return
+      }
+      if (inMathBlock) mathBuf.push(line)
+    })
+
+    // 正文里 `<` 紧跟字母会被 Vue 当成组件，轻则吞内容重则整页空白
+    const proseOnly = maskProseOnly(text)
+    for (const m of proseOnly.matchAll(/(?<!\\)<(\/?)([A-Za-z][A-Za-z0-9_-]*)/g)) {
+      if (SAFE_HTML_TAGS.has(m[2].toLowerCase())) continue
+      const ln = proseOnly.slice(0, m.index).split('\n').length
+      record('裸尖括号(Vue 会当组件)', rel, `L${ln} <${m[2]}`)
     }
 
     // 本地图片是否存在
